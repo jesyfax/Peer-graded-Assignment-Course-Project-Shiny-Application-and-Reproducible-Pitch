@@ -1,0 +1,82 @@
+Reprocible Pitch Presentation
+========================================================
+author: Jesin Fahad
+date: 25-December-2016
+autosize: true
+
+First Slide
+========================================================
+
+Coursera Reproducible Pitch Presentation
+
+Please check out the Course Project
+<https://jesyfax.shinyapps.io/Myshinyapp/>.
+
+The code is share  in the github repository
+<https://github.com/jesyfax/Peer-graded-Assignment-Course-Project-Shiny-Application-and-Reproducible-Pitch>
+
+Overview
+========================================================
+
+This data table set of Rock, Pressure and Cars are displyed in the screen for viewing
+
+Presentation is being created as part of the peer assessment for the Coursera Developing Data Products. The assignment is geared toward ensuring the following concepts were well understood by the students:
+
+shiny to build data product application
+R-Presentation or slidify to create data product related presentations
+
+-A selection of three tables are displyed in the page
+-The table name can be dynamically selected by the user.
+-The number of observations to viewed can also be inputted.
+-OPtion to show/hide the table or summary and be selected by the user. 
+
+Slide With UICode
+========================================================
+
+```{r}
+library(shiny)
+fluidPage(
+  titlePanel("Shiny Text"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("dataset", "Choose a dataset:", 
+                  choices = c("rock", "pressure", "cars")),
+      
+      numericInput("obs", "Number of observations to view:", 10),
+      checkboxInput("Summary","Show Summary"),
+      checkboxInput("Table","Show Table")
+    ),
+    mainPanel(
+      verbatimTextOutput("summary"),
+      
+      tableOutput("view")
+    )
+  )
+)
+```
+
+Slide With ServerCode
+========================================================
+```{r}
+library(shiny)
+library(datasets)
+function(input, output) {
+  # Return the requested dataset
+  datasetInput <- reactive({
+    switch(input$dataset,
+           "rock" = rock,
+           "pressure" = pressure,
+           "cars" = cars)
+  })
+  output$summary <- renderPrint({
+    dataset <- datasetInput()
+    summary(dataset)
+  })
+  output$view <- renderTable({
+    head(datasetInput(), n = input$obs)
+  })
+}
+```
+
+
+
